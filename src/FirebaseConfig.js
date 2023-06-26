@@ -3,7 +3,11 @@ import {
     collection,
     getDocs,
     getFirestore,
+    addDoc,
+    doc,
+    deleteDoc
 } from 'firebase/firestore';
+import { useEffect } from 'react';
 
 function FirebaseConfig() {
     const firebaseConfig = {
@@ -38,6 +42,34 @@ function FirebaseConfig() {
         .catch(err => {
             console.log(err.message)
         })
+
+    // adding documents
+    useEffect(() => {
+        const addBookForm = document.querySelector('.add')
+        addBookForm.addEventListener('submit', e => {
+            e.preventDefault()
+            addDoc(colRef, {
+                    title: addBookForm.title.value,
+                    author: addBookForm.title.value
+                })
+                .then(() => {
+                    addBookForm.reset();
+                })
+        })
+    }, [])
+
+    // deleting documents
+    useEffect(() => {
+        const deleteBookForm = document.querySelector('.delete')
+        deleteBookForm.addEventListener('submit', e => {
+            e.preventDefault()
+            const docRef = doc(db, 'books', deleteBookForm.id.value);
+            deleteDoc(docRef)
+                .then(() => {
+                    deleteBookForm.reset()
+                })
+        })
+    }, [])
 
     return null
 }
