@@ -6,7 +6,9 @@ import {
     addDoc,
     doc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
+    query,
+    where
 } from 'firebase/firestore';
 import { useEffect } from 'react';
 
@@ -31,6 +33,9 @@ function FirebaseConfig() {
     // db.collection('books') // old way
     const colRef = collection(db, 'books');
 
+    // queries
+    const q = query(colRef, where("author", "==", "patrick rothfuss"))
+
     // get collection data
     /* getDocs(colRef)
         .then(snapshot => {
@@ -45,7 +50,15 @@ function FirebaseConfig() {
         }) */
 
     // real time data collection
-    onSnapshot(colRef, snapshot => {
+    /* onSnapshot(colRef, snapshot => {
+        const books = [];
+        snapshot.docs.forEach(doc => {
+            books.push({...doc.data(), id: doc.id })
+        })
+        console.log(books)
+    }) */
+
+    onSnapshot(q, snapshot => {
         const books = [];
         snapshot.docs.forEach(doc => {
             books.push({...doc.data(), id: doc.id })
