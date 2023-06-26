@@ -5,7 +5,8 @@ import {
     getFirestore,
     addDoc,
     doc,
-    deleteDoc
+    deleteDoc,
+    onSnapshot
 } from 'firebase/firestore';
 import { useEffect } from 'react';
 
@@ -31,7 +32,7 @@ function FirebaseConfig() {
     const colRef = collection(db, 'books');
 
     // get collection data
-    getDocs(colRef)
+    /* getDocs(colRef)
         .then(snapshot => {
             const books = [];
             snapshot.docs.forEach(doc => {
@@ -41,7 +42,16 @@ function FirebaseConfig() {
         })
         .catch(err => {
             console.log(err.message)
+        }) */
+
+    // real time data collection
+    onSnapshot(colRef, snapshot => {
+        const books = [];
+        snapshot.docs.forEach(doc => {
+            books.push({...doc.data(), id: doc.id })
         })
+        console.log(books)
+    })
 
     // adding documents
     useEffect(() => {
