@@ -8,7 +8,9 @@ import {
     deleteDoc,
     onSnapshot,
     query,
-    where
+    where,
+    orderBy,
+    serverTimestamp
 } from 'firebase/firestore';
 import { useEffect } from 'react';
 
@@ -34,7 +36,8 @@ function FirebaseConfig() {
     const colRef = collection(db, 'books');
 
     // queries
-    const q = query(colRef, where("author", "==", "patrick rothfuss"))
+    // const q = query(colRef, where("author", "==", "patrick rothfuss"), orderBy('title', 'desc'))
+    const q = query(colRef, orderBy('createdAt'))
 
     // get collection data
     /* getDocs(colRef)
@@ -50,14 +53,6 @@ function FirebaseConfig() {
         }) */
 
     // real time data collection
-    /* onSnapshot(colRef, snapshot => {
-        const books = [];
-        snapshot.docs.forEach(doc => {
-            books.push({...doc.data(), id: doc.id })
-        })
-        console.log(books)
-    }) */
-
     onSnapshot(q, snapshot => {
         const books = [];
         snapshot.docs.forEach(doc => {
@@ -66,19 +61,40 @@ function FirebaseConfig() {
         console.log(books)
     })
 
+    // real time data collection using queries
+    /* onSnapshot(q, snapshot => {
+        const books = [];
+        snapshot.docs.forEach(doc => {
+            books.push({...doc.data(), id: doc.id })
+        })
+        console.log(books)
+    }) */
+
     // adding documents
     useEffect(() => {
         const addBookForm = document.querySelector('.add')
-        addBookForm.addEventListener('submit', e => {
-            e.preventDefault()
-            addDoc(colRef, {
-                    title: addBookForm.title.value,
-                    author: addBookForm.title.value
-                })
-                .then(() => {
-                    addBookForm.reset();
-                })
-        })
+            /* const addSubmission = e => {
+                e.preventDefault()
+                addDoc(colRef, {
+                        title: addBookForm.title.value,
+                        author: addBookForm.title.value,
+                        createAt: serverTimestamp()
+                    })
+                    .then(() => {
+                        addBookForm.reset();
+                    })
+            } */
+            /* addBookForm.addEventListener('submit', e => {
+                e.preventDefault()
+                addDoc(colRef, {
+                        title: addBookForm.title.value,
+                        author: addBookForm.title.value,
+                        createAt: serverTimestamp()
+                    })
+                    .then(() => {
+                        addBookForm.reset();
+                    })
+            }) */
     }, [])
 
     // deleting documents
